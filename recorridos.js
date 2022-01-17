@@ -3,20 +3,25 @@
 Andrés Senn - 2022
 */
 let particles;
-let iterations = 99 * 6;
+let iterations = 99 * 4;
 let num_p = 99;
 let p = [];
 let seed;
+let fc = 1;
 function setup() {
 	// fxhash features
 	window.$fxhashFeatures = {
 		noiseGEN: fxrand(),
 	};
-	seed = int(window.$fxhashFeatures.noiseGEN * 100000000000000);
-	cv = createCanvas(windowWidth, windowHeight);
+	seed = int(window.$fxhashFeatures.noiseGEN * 1000000000000);
+	const cv = createCanvas(windowWidth, windowHeight);
 	cv.parent("cv");
+	cv.id("_99recorridos");
+	cv.class("_99recorridos");
 	pixelDensity(1);
 	init();
+	//
+	console.log(`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022`);
 }
 function init() {
 	noiseSeed(seed);
@@ -25,7 +30,7 @@ function init() {
 	background(0);
 	p = [];
 	for (let i = 0; i < num_p; i++) {
-		p.push(createVector(random(-250, 250), random(-250, 250)));
+		p.push(createVector(random(-350, 350), random(-350, 350)));
 	}
 	particles = [];
 	for (let i = 0; i < num_p; i++) {
@@ -34,25 +39,26 @@ function init() {
 }
 function draw() {
 	render();
-	if (frameCount > iterations) {
+	if (fc > iterations) {
 		noLoop();
-		fxpreview();
+		if (!isFxpreview) {
+			fxpreview();
+		}
 	}
 }
 function render() {
 	push();
-	translate(width/2,height/2);
+	translate(width / 2, height / 2);
+	scale(1.5);
 	for (let i = 0; i < particles.length; i++) {
-		let d = dist(
-			particles[i].pos.x,
-			particles[i].pos.y,
-			0,
-			0,
-		);
-		if (d < 250) {
+		let d = dist(particles[i].pos.x, particles[i].pos.y, 0, 0);
+		if (d < 350) {
 			particles[i].update();
 			noStroke();
-			fill(0, map(particles[i].diam, 0, particles[i].maxdiam / 2, 50, 5));
+			fill(
+				0,
+				map(particles[i].diam, 0, particles[i].maxdiam / 2, 50, 5),
+			);
 			let shadow = particles[i].diam / 4;
 			circle(
 				particles[i].pos.x + shadow,
@@ -65,7 +71,7 @@ function render() {
 				particles[i].diam * 2.5,
 			);
 			let c = 255;
-			if (frameCount % 200 < 20) {
+			if (fc % 200 < 20) {
 				let n = noise(
 					particles[i].pos.x * 0.01,
 					particles[i].pos.y * 0.01,
@@ -73,14 +79,18 @@ function render() {
 				c = 255 * n;
 			}
 			fill(c);
-			circle(particles[i].pos.x, particles[i].pos.y, particles[i].diam);
+			circle(
+				particles[i].pos.x,
+				particles[i].pos.y,
+				particles[i].diam,
+			);
 			push();
-			if (frameCount % 3 == 0) {
+			if (fc % 3 == 0) {
 				fill(0, 80);
 				let col = 0;
 				let rr = random(2, 8);
 				stroke(random(255));
-				if (frameCount % 190 == 0) {
+				if (fc % 210 == 0) {
 					line(
 						particles[i].pos.x,
 						particles[i].pos.y,
@@ -118,11 +128,12 @@ function render() {
 		}
 	}
 	pop();
+	fc++;
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	loop();
-	frameCount = 0;
+	fc = 1;
 	init();
 }
 class Particle {
@@ -141,7 +152,7 @@ class Particle {
 	}
 	update() {
 		this.n = noise(this.pos.x * 0.001, this.pos.y * 0.001, this.off);
-		let dil = 9;
+		let dil = map(sin(this.off * 0.3), -1, 1, 3, 9);
 		this.dir.x = cos(this.n * TAU * dil);
 		this.dir.y = sin(this.n * TAU * dil);
 		this.vel.add(this.dir);

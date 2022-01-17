@@ -1,9 +1,10 @@
 body {
 	padding: 0;
 	margin: 0;
-	background: white;
+	background: #000;
 	height: 100%;
 	width: 100%;
+	overscroll-behavior: contain;
 }
 #cv {
 	display: flex;
