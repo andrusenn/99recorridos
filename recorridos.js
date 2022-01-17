@@ -1,6 +1,7 @@
 /*
 99 recorridos sobre plano negro
 Andrés Senn - 2022
+Projet code: https://github.com/andrusenn/99recorridos
 */
 let particles;
 let iterations = 99 * 4;
@@ -21,7 +22,7 @@ function setup() {
 	pixelDensity(1);
 	init();
 	//
-	console.log(`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022`);
+	console.log(`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022\nProjet code: https://github.com/andrusenn/99recorridos`);
 }
 function init() {
 	noiseSeed(seed);
