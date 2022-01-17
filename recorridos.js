@@ -1,18 +1,19 @@
 /*
 99 recorridos sobre plano negro
-Andrés Senn - 2022
+Andrés Senn - 2022 - https://www.fxhash.xyz/
 Projet code: https://github.com/andrusenn/99recorridos
 */
 let particles;
-let iterations = 99 * 4;
+let iterations = 99 * 3;
 let num_p = 99;
 let p = [];
 let seed;
 let fc = 1;
+let sz = 480;
 function setup() {
 	// fxhash features
 	window.$fxhashFeatures = {
-		noiseGEN: fxrand(),
+		noiseGEN: 0.5,//fxrand(),
 	};
 	seed = int(window.$fxhashFeatures.noiseGEN * 1000000000000);
 	const cv = createCanvas(windowWidth, windowHeight);
@@ -22,7 +23,9 @@ function setup() {
 	pixelDensity(1);
 	init();
 	//
-	console.log(`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022\nProjet code: https://github.com/andrusenn/99recorridos`);
+	console.log(
+		`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022\nProjet code: https://github.com/andrusenn/99recorridos`,
+	);
 }
 function init() {
 	noiseSeed(seed);
@@ -31,7 +34,7 @@ function init() {
 	background(0);
 	p = [];
 	for (let i = 0; i < num_p; i++) {
-		p.push(createVector(random(-350, 350), random(-350, 350)));
+		p.push(createVector(random(-sz, sz), random(-sz, sz)));
 	}
 	particles = [];
 	for (let i = 0; i < num_p; i++) {
@@ -50,16 +53,13 @@ function draw() {
 function render() {
 	push();
 	translate(width / 2, height / 2);
-	scale(1.5);
+	scale(width / (sz * 2) * 1.1);
 	for (let i = 0; i < particles.length; i++) {
 		let d = dist(particles[i].pos.x, particles[i].pos.y, 0, 0);
-		if (d < 350) {
+		if (d < sz * 1.1) {
 			particles[i].update();
 			noStroke();
-			fill(
-				0,
-				map(particles[i].diam, 0, particles[i].maxdiam / 2, 50, 5),
-			);
+			fill(0, map(particles[i].diam, 0, particles[i].maxdiam / 2, 50, 5));
 			let shadow = particles[i].diam / 4;
 			circle(
 				particles[i].pos.x + shadow,
@@ -80,11 +80,7 @@ function render() {
 				c = 255 * n;
 			}
 			fill(c);
-			circle(
-				particles[i].pos.x,
-				particles[i].pos.y,
-				particles[i].diam,
-			);
+			circle(particles[i].pos.x, particles[i].pos.y, particles[i].diam);
 			push();
 			if (fc % 3 == 0) {
 				fill(0, 80);
