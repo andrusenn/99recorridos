@@ -89,18 +89,7 @@ function render() {
 			circle(particles[i].pos.x, particles[i].pos.y, particles[i].diam);
 			push();
 			if (fc % 3 == 0) {
-				fill(0, 80);
-				let col = 0;
-				let rr = random(2, 8);
-				stroke(random(255));
-				if (fc % 210 == 0) {
-					line(
-						particles[i].pos.x - 125,
-						particles[i].pos.y,
-						particles[i].pos.x + 125,
-						particles[i].pos.y,
-					);
-				}
+				stroke(random(255), 100);
 				if (fc % 105 == 0) {
 					line(
 						particles[i].pos.x,
@@ -110,12 +99,11 @@ function render() {
 					);
 				}
 				noStroke();
+				fill(random(255), 80);
+				let rr = map(this.n, 0, 1, 4, 8);
 				rect(particles[i].pos.x, particles[i].pos.y, rr, rr);
 				for (let j = 0; j < particles.length; j++) {
-					if (particles[i].n > 0.5) {
-						col = 255;
-					}
-					stroke(col, 60);
+					stroke(random(255), 60);
 					strokeWeight(0.5);
 					if (particles[i] != particles[j]) {
 						let pd = dist(
@@ -124,7 +112,7 @@ function render() {
 							particles[j].pos.x,
 							particles[j].pos.y,
 						);
-						if (pd > 40 && pd < 60) {
+						if (pd > 75 && pd < 80) {
 							line(
 								particles[i].pos.x,
 								particles[i].pos.y,
@@ -145,12 +133,18 @@ function keyReleased() {
 	if (key == "s" || key == "S") {
 		if (fc > iterations) {
 			let date =
-				year() + "" +
-				month() + "" +
-				day() + "" +
-				hour() + "" +
-				minute() + "" +
-				second() + "" +
+				year() +
+				"" +
+				month() +
+				"" +
+				day() +
+				"" +
+				hour() +
+				"" +
+				minute() +
+				"" +
+				second() +
+				"" +
 				".png";
 			saveCanvas("99recorridos" + date);
 		}
@@ -165,20 +159,22 @@ class Particle {
 		this.a = 0;
 		this.c = random(255);
 		this.dir = createVector(0, 0);
-		this.off = random(5);
-		this.mult = 0.75;
+		this.off = random(0.5);
+		this.mult = 0.7;
 		this.points = p;
 		this.n = 0;
+		this.ns = 0.001;
 	}
 	update() {
-		this.n = noise(this.pos.x * 0.001, this.pos.y * 0.001, this.off);
-		let dil = map(sin(this.off * 0.3), -1, 1, 3, 9);
+		this.n = noise(this.pos.x * this.ns, this.pos.y * this.ns, this.off);
+		this.ns = map(this.n, 0, 1, 0.0005, 0.005);
+		let dil = map(sin(this.n * TAU), 0, 1, 8, 24);
 		this.dir.x = cos(this.n * TAU * dil);
 		this.dir.y = sin(this.n * TAU * dil);
 		this.vel.add(this.dir);
 		this.vel.mult(this.mult);
 		this.pos.add(this.vel);
-		this.off += 0.01;
+		this.off += 0.001;
 		let distances = [];
 		for (let i = 0; i < this.points.length; i++) {
 			let dis = dist(
@@ -187,7 +183,7 @@ class Particle {
 				this.points[i].x,
 				this.points[i].y,
 			);
-			distances.push(map(dis, 0, 500 / 2, 0.0, this.maxdiam));
+			distances.push(map(dis, 0, 700 / 2, 0.0, this.maxdiam));
 		}
 		this.diam = constrain(
 			Math.min.apply(null, distances),
