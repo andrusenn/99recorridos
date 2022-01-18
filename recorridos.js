@@ -1,5 +1,5 @@
 /*
-99 recorridos sobre plano negro
+99 recorridos
 Andrés Senn - 2022 - https://www.fxhash.xyz/
 Projet code: https://github.com/andrusenn/99recorridos
 */
@@ -9,11 +9,11 @@ let num_p = 99;
 let p = [];
 let seed;
 let fc = 1;
-let sz = 480;
+let sz = 800 / 2;
 function setup() {
 	// fxhash features
 	window.$fxhashFeatures = {
-		noiseGEN: 0.5,//fxrand(),
+		noiseGEN: fxrand(),
 	};
 	seed = int(window.$fxhashFeatures.noiseGEN * 1000000000000);
 	const cv = createCanvas(windowWidth, windowHeight);
@@ -24,21 +24,25 @@ function setup() {
 	init();
 	//
 	console.log(
-		`99 recorridos sobre plano negro\nAndrés Senn\nfxhash 01/2022\nProjet code: https://github.com/andrusenn/99recorridos`,
+		`99 recorridos\nAndrés Senn\nfxhash 01/2022\nProjet code: https://github.com/andrusenn/99recorridos`,
 	);
 }
 function init() {
 	noiseSeed(seed);
 	randomSeed(seed);
 	noStroke();
-	background(0);
+	let bg = 0;
+	if(random(1)>0.5){
+		bg = 255;
+	}
+	background(bg);
 	p = [];
 	for (let i = 0; i < num_p; i++) {
 		p.push(createVector(random(-sz, sz), random(-sz, sz)));
 	}
 	particles = [];
 	for (let i = 0; i < num_p; i++) {
-		particles.push(new Particle(0, 0, p));
+		particles.push(new Particle(0, random(-sz, sz) * 0.5, p));
 	}
 }
 function draw() {
@@ -53,10 +57,9 @@ function draw() {
 function render() {
 	push();
 	translate(width / 2, height / 2);
-	scale(width / (sz * 2) * 1.1);
 	for (let i = 0; i < particles.length; i++) {
 		let d = dist(particles[i].pos.x, particles[i].pos.y, 0, 0);
-		if (d < sz * 1.1) {
+		if (d < sz) {
 			particles[i].update();
 			noStroke();
 			fill(0, map(particles[i].diam, 0, particles[i].maxdiam / 2, 50, 5));
@@ -89,10 +92,18 @@ function render() {
 				stroke(random(255));
 				if (fc % 210 == 0) {
 					line(
+						particles[i].pos.x - 125,
+						particles[i].pos.y,
+						particles[i].pos.x + 125,
+						particles[i].pos.y,
+					);
+				}
+				if (fc % 105 == 0) {
+					line(
 						particles[i].pos.x,
-						particles[i].pos.y,
-						particles[i].pos.x + 250,
-						particles[i].pos.y,
+						particles[i].pos.y - 125,
+						particles[i].pos.x,
+						particles[i].pos.y + 125,
 					);
 				}
 				noStroke();
