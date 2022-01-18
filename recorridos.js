@@ -9,14 +9,14 @@ let num_p = 99;
 let p = [];
 let seed;
 let fc = 1;
-let sz = 800 / 2;
+let sz = 1000 / 2;
 function setup() {
 	// fxhash features
 	window.$fxhashFeatures = {
 		noiseGEN: fxrand(),
 	};
 	seed = int(window.$fxhashFeatures.noiseGEN * 1000000000000);
-	const cv = createCanvas(windowWidth, windowHeight);
+	const cv = createCanvas(2160, 2160);
 	cv.parent("cv");
 	cv.id("_99recorridos");
 	cv.class("_99recorridos");
@@ -32,10 +32,12 @@ function init() {
 	randomSeed(seed);
 	noStroke();
 	let bg = 0;
-	if(random(1)>0.5){
+	if (random(1) > 0.5) {
 		bg = 255;
 	}
 	background(bg);
+	document.getElementsByTagName("body")[0].style.background =
+		"rgb(" + bg + "," + bg + "," + bg + ")";
 	p = [];
 	for (let i = 0; i < num_p; i++) {
 		p.push(createVector(random(-sz, sz), random(-sz, sz)));
@@ -57,6 +59,7 @@ function draw() {
 function render() {
 	push();
 	translate(width / 2, height / 2);
+	scale(2.3);
 	for (let i = 0; i < particles.length; i++) {
 		let d = dist(particles[i].pos.x, particles[i].pos.y, 0, 0);
 		if (d < sz) {
@@ -138,11 +141,20 @@ function render() {
 	pop();
 	fc++;
 }
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
-	loop();
-	fc = 1;
-	init();
+function keyReleased() {
+	if (key == "s" || key == "S") {
+		if (fc > iterations) {
+			let date =
+				year() + "" +
+				month() + "" +
+				day() + "" +
+				hour() + "" +
+				minute() + "" +
+				second() + "" +
+				".png";
+			saveCanvas("99recorridos" + date);
+		}
+	}
 }
 class Particle {
 	constructor(x, y, p) {
